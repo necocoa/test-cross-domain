@@ -26,4 +26,35 @@
     height="600"
     style="border: none"
   ></iframe>
+
+  <!-- クロスドメイン用 セッション引き継ぎ -->
+  <script>
+    var getGaClientId = new Promise(function (resolve) {
+      gtag("get", "G-7VTMQTQQ1B", "client_id", resolve);
+    });
+    var getGaSessionId = new Promise(function (resolve) {
+      gtag("get", "G-7VTMQTQQ1B", "session_id", resolve);
+    });
+
+    Promise.all([getGaClientId, getGaSessionId]).then(function (ids) {
+      var clientId = ids[0];
+      var sessionId = ids[1];
+
+      var iframe = document.querySelector("#CoubicWidgetCalendar");
+      if (iframe) {
+        var src = iframe.src;
+        var url = document.createElement("a");
+        url.href = src;
+
+        var searchParams = url.search ? url.search.substring(1) : "";
+        var params = new URLSearchParams(searchParams);
+
+        params.append("ga_client_id", clientId);
+        params.append("ga_session_id", sessionId);
+
+        url.search = params.toString();
+        iframe.src = url.href;
+      }
+    });
+  </script>
 </body>
